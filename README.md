@@ -9,7 +9,13 @@ Your task is to write a program that analyzes the imagery and produces an approx
 
 In submitting your task, please provide instructions on running your program and include any additional detail describing the choices you made or issues you encountered.
 
-#Instructions
+# Instructions
 
-#Additional Details 
+# Additional Details About Program
+
+% Challenges
+
+1) This was my first remote sensing project using Python and Github. As such, it took some time to shift gears from MATLAB to Python Syntax. 
+2) The Term "green vegetation" was difficult to interprete (i.e., what is considered green vegetation?). This challenge is handled by defined green vegetation based on the green absoption feature.
+
 
