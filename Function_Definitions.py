@@ -7,6 +7,8 @@ import shutil
 from xml.dom import minidom
 import numpy as np
 from datetime import datetime
+import matplotlib.pyplot as plt
+import copy
 
 # Merge Rasters
 def merge_rasters(folder_loc,raster_names):    
@@ -190,7 +192,76 @@ def import_mask(folder_loc,mask_name_list):
 def apply_mask(mask_ts,img_ts):
     mask_data= np.broadcast_to(mask_ts, img_ts.shape)
     imgs_ts_masked=np.ma.array(img_ts, mask=mask_data)
-
     return imgs_ts_masked
 
 
+def plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,color_mapping):
+    
+    
+    img_dim=np.shape(ndvi_ts)
+    
+    for i in range(img_dim[0]):
+        temp_img=ndvi_ts[i,:,:]
+        x=easting_vec
+        y=northing_vec
+        date_time = times[i][0].strftime("%m/%d/%Y, %H:%M:%S")
+        plt.imshow(temp_img,vmin=min_col, vmax=max_col, cmap=color_mapping,extent=[x.min(), x.max(), y.min(), y.max()])
+        plt.title(date_time)
+        plt.xlabel("Easting (m)- WGS 84 / UTM zone 48S")
+        plt.xticks(rotation = 45)
+        plt.ylabel("Northing (m)- WGS 84 / UTM zone 48S")
+        plt.colorbar()
+        plt.show()
+        
+
+### time series analysis
+
+
+def ts_analysis(ndvi_ts_masked, times,class_threshold, mask_ts):
+    #get dimensions of ndvi time series and class threshold 
+    thresh_dims=np.shape(class_threshold)
+    img_dim=np.shape(ndvi_ts_masked)
+    
+    #predefine output variables
+    class_ts=np.zeros(img_dim)
+    class_ts=apply_mask(mask_ts,class_ts)
+    tot_pixels=np.zeros([img_dim[0],thresh_dims[0]+1])
+    img_2_img_time_diff=np.zeros([len(times)-1])
+    
+                     
+    #calculate days between images
+    for i in range(len(times)-1):
+        delta = times[i+1] - times [i]
+        img_2_img_time_diff[i]=delta[0].total_seconds()/60/60/24
+        
+    #generate classififed time series data cube and count number of pixels in each class
+    for i in range(thresh_dims[0]):
+        indx=np.logical_and(ndvi_ts_masked>class_threshold[i,0],ndvi_ts_masked <= class_threshold[i,1])
+        class_ts[indx]=i+1
+        
+    #calculate number of pixels in each class    
+    for i in range(img_dim[0]):
+        for j in range(thresh_dims[0]+1):
+            tot_pixels[i,j]=np.sum(class_ts[i,:,:]==(j+1))
+            if j==thresh_dims[0]:
+                tot_pixels[i,j]=np.sum(class_ts[i]==0)
+    
+    
+    #calculate difference between images
+    delta_class_ts=np.zeros([len(times)-1,img_dim[1],img_dim[2]])
+    apply_mask(mask_ts,delta_class_ts)
+    
+    for i in range(img_dim[0]-1):
+        delta_class_ts[i,:,:]= (class_ts[i,:,:]+1)*100+(class_ts[i+1,:,:]+1)
+        
+        
+    delta_GV_SO=np.zeros(len(times)-1)
+    #caluclate rate of chang from veg-> soil 
+    for i in range(len(times)-1):
+        delta_GV_SO[i]=np.sum(delta_class_ts[i,:,:]==302)*3*3/img_2_img_time_diff[i]
+    return img_2_img_time_diff, class_ts, delta_class_ts, delta_GV_SO
+
+
+    def class_2_class_code(start_class,end_class):
+        class_code=(start_class+1)*100+(end_class+1)
+        return class_code

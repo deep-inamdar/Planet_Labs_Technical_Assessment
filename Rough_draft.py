@@ -1,9 +1,10 @@
 #Required libraries
 import os
 import fnmatch
-from Function_Definitions import prep_4_import, xml_info, import_imgry_norm, calc_ndvi, import_mask, apply_mask
+from Function_Definitions import prep_4_import, xml_info, import_imgry_norm, calc_ndvi, import_mask, apply_mask, plot_ndvi_ts
 import shutil
-
+import numpy as np
+import matplotlib.pyplot as plt
 #input parameters
 folder_loc='D:\Planet_Techical_Assignment\Assessment\data'
 
@@ -28,23 +29,35 @@ mask_ts=import_mask(folder_loc,mask_name_list)
 
 ndvi_ts_masked=apply_mask(mask_ts,ndvi_ts)
 
+#define threshold values
+class_threshold= np.array([[0, 0.3], [0.3, np.max(ndvi_ts_masked)]])
+
+
+#plot res_of 
+
+min_col=0
+max_col=2
+
+plot_ndvi_ts(class_ts, times, easting_vec,northing_vec, min_col,max_col)
+plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,col_mapping)
+
+
+#plot_ts
+
+min_col=.3
+max_col=1
+color_mapping='YlGn
+
+plot_ndvi_ts(ndvi_ts_masked, times, easting_vec,northing_vec, min_col,max_col,color_mapping)
 
 
 
 
 
+plt.hist(ndvi_ts_masked.compressed())
+plt.hist(ndvi_ts.flatten())
 
-
-
-
-
-
-
-
-
-
-
-
+np.nanmax(ndvi_ts_masked)
 
 
 
