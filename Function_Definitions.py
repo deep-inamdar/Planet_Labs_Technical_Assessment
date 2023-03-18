@@ -1,6 +1,6 @@
 """
 A collection of python functions used to analyze time series PSScene4Band imagery
-clipped to the same exent.The functions are used in PSScene4Band_ts_analysis.py
+clipped to the same extent.The functions are used in PSScene4Band_ts_analysis.py
 to quantify the rate of change from green vegetation to bare soil over the time
 period represented by the image series. 
 
@@ -19,10 +19,14 @@ from xml.dom import minidom
 import numpy as np
 from datetime import datetime
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+import matplotlib.patches as mpatches
+
+
 
 def merge_rasters(folder_loc,raster_names):    
     """
-    Mosaics together images, writing out mosaiced image in the "/Mosaic/" 
+    Mosaics together images, writing out mosaiced image in the "Output/Mosaic/" 
     subfolder. The mosaiced file is in *.tif format with "_mos" appended to the
     first listed file name.
 
@@ -41,9 +45,9 @@ def merge_rasters(folder_loc,raster_names):
         A list containing a string with the name of the mosaiced file. 
     """
     #Create folder for mosaiced image
-    isExist = os.path.exists(folder_loc+'Mosaic')
+    isExist = os.path.exists(folder_loc+'Output/Mosaic')
     if not isExist:
-       os.makedirs(folder_loc+'Mosaic')
+       os.makedirs(folder_loc+'Output/Mosaic')
     
     #Mosaic all files on raster_names
     raster_to_mosiac = []
@@ -61,7 +65,7 @@ def merge_rasters(folder_loc,raster_names):
             "transform": output,
         }
     )
-    mos_name="Mosaic/" + raster_names[0][:-4]+"_mos.tif"
+    mos_name="Output/Mosaic/" + raster_names[0][:-4]+"_mos.tif"
     
     #Write out image
     with rasterio.open(folder_loc+mos_name, "w", **output_meta) as m:
@@ -112,11 +116,12 @@ def prep_4_import(folder_loc):
     if not isExist:
        os.makedirs(folder_loc+'Output')
     
-    #Obtain a list of files in directory
+    # Obtain a list of files in directory
     folder_dir=os.listdir(folder_loc)
 
-    #Extract dates from file names
-    folder_dir_dates=[(i[:8]) for i in folder_dir[:-2]]
+    # Extract dates from file names
+    # First 8 digits represent the date
+    folder_dir_dates=[(i[:8]) for i in folder_dir[:-1]]
     unq_dates=list(set(folder_dir_dates))
     unq_dates.sort(key = int)
 
@@ -144,15 +149,15 @@ def prep_4_import(folder_loc):
         if len(matching)>1:
             matching=merge_rasters(folder_loc,matching)
         mask_name_list.append(matching)
+        
     #Identify xml files to be analyzed
     xml_name_list=[]
-
     for i in range(len(unq_dates)):
         pattern = unq_dates[i]+'*'+xml_str
         matching = fnmatch.filter(folder_dir, pattern)
         if len(matching)>1:
-            shutil.copy(folder_loc+matching[0],folder_loc+ "Mosaic/" + matching[0][:-4]+"_mos.xml")
-            matching="Mosaic/" + matching[0][:-4]+"_mos.xml"
+            shutil.copy(folder_loc+matching[0],folder_loc+ "Output/Mosaic/" + matching[0][:-4]+"_mos.xml")
+            matching="Output/Mosaic/" + matching[0][:-4]+"_mos.xml"
         xml_name_list.append(matching)
         
     return img_name_list, mask_name_list, xml_name_list, folder_loc
@@ -191,14 +196,14 @@ def xml_info(folder_loc,xml_name_list):
     for i in range(len(xml_name_list)):
         xmldoc = minidom.parse(folder_loc+''.join(xml_name_list[i]))
         nodes_coef = xmldoc.getElementsByTagName("ps:bandSpecificMetadata")
-        nodes_time=xmldoc.getElementsByTagName("ps:Acquisition")
+        nodes_time = xmldoc.getElementsByTagName("ps:Acquisition")
         for node in nodes_coef:
             bn = node.getElementsByTagName("ps:bandNumber")[0].firstChild.data
             if bn in ['1', '2', '3', '4']:
                 j = int(bn)-1
                 value = node.getElementsByTagName("ps:reflectanceCoefficient")[0].firstChild.data
                 coeffs[i,j] = float(value)
-        date_time=nodes_time[0].getElementsByTagName("ps:acquisitionDateTime")[0].firstChild.data
+        date_time = nodes_time[0].getElementsByTagName("ps:acquisitionDateTime")[0].firstChild.data
         times[i] = datetime.strptime(date_time[0:19], "%Y-%m-%dT%H:%M:%S")
         
     return coeffs, times
@@ -497,7 +502,7 @@ def transition_code_2_class_code(transition_code):
 
 
 
-def plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,color_mapping):
+def plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,color_mapping,folder_loc):
     """
     Plot ndvi_ts data. 
 
@@ -522,16 +527,89 @@ def plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,color
     """
     
     img_dim=np.shape(ndvi_ts)
-    
+    isExist = os.path.exists(folder_loc+'Output/NDVI/')
+    if not isExist:
+       os.makedirs(folder_loc+'Output/NDVI/')
     for i in range(img_dim[0]):
         temp_img=ndvi_ts[i,:,:]
         x=easting_vec
         y=northing_vec
         date_time = times[i][0].strftime("%m/%d/%Y, %H:%M:%S")
-        plt.imshow(temp_img,vmin=min_col, vmax=max_col, cmap=color_mapping,extent=[x.min(), x.max(), y.min(), y.max()])
+        plt.imshow(temp_img,interpolation='none',vmin=min_col, vmax=max_col, cmap=color_mapping,extent=[x.min(), x.max(), y.min(), y.max()])
         plt.title(date_time)
         plt.xlabel("Easting (m)- WGS 84 / UTM zone 48S")
         plt.xticks(rotation = 45)
         plt.ylabel("Northing (m)- WGS 84 / UTM zone 48S")
         plt.colorbar()
-        plt.show()
+        plt.savefig(folder_loc+'Output/NDVI/'+'NDVI_Date_'+str(i+1), dpi=200, bbox_inches='tight', pad_inches=0.7)
+        #plt.show()
+        
+     
+def plot_classification(class_ts, times, easting_vec,northing_vec,folder_loc,class_names):
+        """
+        Plot classified time series data 
+
+        Parameters
+        ----------
+        class_ts: Array of float64, size= (t,y,x)
+            Classifed time series data. Value of 1:j represent classes of 1:j, 
+            respectively. A value of zero indicates the pixel does not fall in any
+            of these classes. 
+        times: array of datetime objects, size=(n,1)
+            An array of the dates/times associated with each time series image.
+        easting_vec: Array of float64, size=(x,)
+            Easting postion (m) of each column of the imagery.  
+        northing_vec: Array of float64, size=(x,)
+            Northing postion (m) of each row of the imagery.
+        min_col: float
+            Minimum value of color bar.
+        max_col: float
+            Maximum value of color bar.
+        color_mapping: str
+            Color map str.
+        """
+        
+        img_dim=np.shape(class_ts)
+        new_colors=np.array([[0.7, 0.75, .75, 1],[0.9176,0.8667,0.7922, 1],[0,0.7059,0.3412,1]])
+        newcmp = ListedColormap(new_colors)
+        values = np.unique(class_ts.ravel())
+        isExist = os.path.exists(folder_loc+'Output/Classification/')
+        if not isExist:
+           os.makedirs(folder_loc+'Output/Classification/')
+        
+        for i in range(img_dim[0]):
+            temp_img=class_ts[i,:,:]
+            x=easting_vec
+            y=northing_vec
+            date_time = times[i][0].strftime("%m/%d/%Y, %H:%M:%S")
+            im=plt.imshow(temp_img,interpolation='none',vmin=0, vmax=3, cmap=newcmp,extent=[x.min(), x.max(), y.min(), y.max()])
+            plt.title(date_time)
+            plt.xlabel("Easting (m)- WGS 84 / UTM zone 48S")
+            plt.xticks(rotation = 45)
+            plt.ylabel("Northing (m)- WGS 84 / UTM zone 48S")
+            # get the colors of the values, according to the 
+            # colormap used by imshow
+            colors = [ im.cmap(im.norm(value)) for value in values[range(len(values)-1)]]
+            # create a patch (proxy artist) for every color 
+            patches = [ mpatches.Patch(color=colors[j], label= class_names[j]) for j in range(len(values)-1) ]
+            # put those patched as legend-handles into the legend
+            plt.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0. )
+            plt.savefig(folder_loc+'Output/Classification/'+'Classification_Date_'+str(i+1), dpi=200, bbox_inches='tight', pad_inches=0.7)
+            #plt.show()
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
