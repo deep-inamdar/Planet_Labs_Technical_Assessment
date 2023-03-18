@@ -1,7 +1,7 @@
 # Planet_Labs_Technical_Assessment
-Take Home Test for Planet Labs Interview
 
-# Task
+Take Home Test for Planet Labs Interview (March-2023)
+## Task
 
 The data folder includes GeoTIFFs and metadata files for a number of PlanetScope acquisitions over Sumatra between June and September, 2020. The AnalyticMS files are analytic assets from PSScene4Band imagery; the udm2 files are Usable Data Masks; and the metadata.json files include the full imagery footprint, acquisition times, and additional metadata. All raster data is clipped to the same extent (which is different than the full imagery footprints).
 
@@ -9,10 +9,11 @@ Your task is to write a program that analyzes the imagery and produces an approx
 
 In submitting your task, please provide instructions on running your program and include any additional detail describing the choices you made or issues you encountered.
 
-# Instructions
+# Proggram Instructions
 
 # Additional Details About Program
-Inputs: folder location of images, masks and 
+
+
 
 
 
@@ -30,4 +31,5 @@ Band 1 of the UDM file was used as the image mask since we were not interested i
 4) It was unclear if the time was on a 24 hour clock or not.
 5) Automatic extraction of images is not comprehensive (if one half of a data aquistion was collected at 11:59PM on the 1st, and the second half was collected at 12:00am on the 2nd, they would be treated as different time series entries)
 6) There were slightly different atmospheric coeffiencts between the two halves of the 20200727 imagery. I decided to use the coefficents form the first image on both under the assumption that the atmospheric differences between the two images were negligble (which they should be if data was collected under stable illumination connditions).
-7) Since all of the images are from the same 
+7) Since all of the images are from the same size, we dont need to spatially subset the data...it would have been nice to add image check function to see if all images have the same transform
+8) It was unclear 

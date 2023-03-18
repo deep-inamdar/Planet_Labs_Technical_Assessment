@@ -33,22 +33,22 @@ ndvi_ts_masked=apply_mask(mask_ts,ndvi_ts)
 class_threshold= np.array([[0, 0.3], [0.3, np.max(ndvi_ts_masked)]])
 
 
-#plot res_of 
-
-min_col=0
-max_col=2
-
-plot_ndvi_ts(class_ts, times, easting_vec,northing_vec, min_col,max_col)
-plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,col_mapping)
-
+img_2_img_time_diff, class_ts, delta_class_ts, delta_GV_SO=(ndvi_ts_masked, times,class_threshold, mask_ts)
 
 #plot_ts
-
 min_col=.3
 max_col=1
-color_mapping='YlGn
+color_mapping='YlGn'
 
 plot_ndvi_ts(ndvi_ts_masked, times, easting_vec,northing_vec, min_col,max_col,color_mapping)
+
+
+
+min_col=0
+max_col=1
+color_mapping='YlGn'
+
+plot_ndvi_ts((delta_class_ts==302), times[:3], easting_vec,northing_vec, min_col,max_col,color_mapping)
 
 
 
@@ -60,4 +60,4 @@ plt.hist(ndvi_ts.flatten())
 np.nanmax(ndvi_ts_masked)
 
 
-
+class_2_transition_code(start_class,end_class)
