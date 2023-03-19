@@ -9,8 +9,20 @@ image series.
 
 # Instructions
 
+## Download repository to local folder
+1) Open directory
+2)
 
+## Install required library
+1) Navigate to the folder location using the command line
+2) Run "-m pip install -r requirements.txt"
 
+## Running Progam
+1) Navigate to the folder location using the command line
+2) Run main.py
+3) When prompted, navigate to the "Data" folder in the downloaded directory
+4) The results will be printed in the console. Go to the indentified directories
+to see the auxilary data files. 
 
 # Additional Details About Program
 

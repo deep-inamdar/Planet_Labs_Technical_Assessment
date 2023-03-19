@@ -9,19 +9,19 @@ Author: Deep Inamdar
 
 #Required libraries
 
-#from tkinter.filedialog import askdirectory
+from tkinter.filedialog import askdirectory
 import numpy as np
 from Function_Definitions import prep_4_import, xml_info, import_imgry_norm, calc_ndvi, import_mask, apply_mask, plot_ndvi_ts, ts_analysis, plot_classification, calc_rate_of_change, plot_class_diff
 
 
 
 #input parameters
-folder_loc='D:/Planet_Techical_Assignment/Assessment/data/'
+#folder_loc='D:/Planet_Techical_Assignment/Assessment/data/'
 print('---PSScene4Band Imagery Time Series Analyzer----')
 print()
 print('Select the folder location of the time series data using the pop-up dialog')
 
-#folder_loc=askdirectory()
+folder_loc=askdirectory()
 
 
 print()
@@ -32,7 +32,7 @@ img_name_list, mask_name_list, xml_name_list,folder_loc=prep_4_import(folder_loc
 
 print('Extracting relevant meta data from xml file...')
 #Extract TOA reflectance coefficients and time for each dataset
-coeffs, times=xml_info(folder_loc,xml_name_list)
+coeffs, times, resolution=xml_info(folder_loc,xml_name_list)
 
 print('Improrting imagery as time series and applying Top-of-atmosphere coefficients...')
 #Import imagery, apply TOA reflectance coefficients
@@ -62,7 +62,7 @@ img_2_img_time_diff, class_ts, delta_class_ts=ts_analysis(ndvi_ts_masked, times,
 
 start_class=2
 end_class=1
-delta_GV_SO= calc_rate_of_change(img_2_img_time_diff,delta_class_ts, start_class, end_class)
+delta_GV_SO= calc_rate_of_change(img_2_img_time_diff,delta_class_ts, start_class, end_class,resolution)
 
 print('Generating NDVI figures in '+folder_loc+'Output/NDVI/ ...')
 #Plot NDVI
@@ -80,7 +80,7 @@ plot_classification(class_ts, times, easting_vec,northing_vec,folder_loc,class_n
 
 
     
-print('Generating classification figures in '+folder_loc+'Output/Change_Detection/ ...')
+print('Generating change detection figures in '+folder_loc+'Output/Change_Detection/ ...')
 plot_class_diff(delta_class_ts, times, easting_vec,northing_vec,folder_loc,class_names,mask_ts)
 
 
