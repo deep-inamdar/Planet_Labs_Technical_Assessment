@@ -1,12 +1,22 @@
+"""
+Program used to analyze PSScene4Band imagery time series. The program
+quantifies the rate of change from green vegetation to bare soil over the time
+period represented by the image series. 
+
+Author: Deep Inamdar
+"""
+
+
 #Required libraries
-from Function_Definitions import prep_4_import, xml_info, import_imgry_norm, calc_ndvi, import_mask, apply_mask, plot_ndvi_ts, ts_analysis, plot_classification
+
+#from tkinter.filedialog import askdirectory
 import numpy as np
-from tkinter.filedialog import askdirectory
+from Function_Definitions import prep_4_import, xml_info, import_imgry_norm, calc_ndvi, import_mask, apply_mask, plot_ndvi_ts, ts_analysis, plot_classification, calc_rate_of_change, plot_class_diff
 
 
 
 #input parameters
-folder_loc='D:\Planet_Techical_Assignment\Assessment\data'
+folder_loc='D:/Planet_Techical_Assignment/Assessment/data/'
 print('---PSScene4Band Imagery Time Series Analyzer----')
 print()
 print('Select the folder location of the time series data using the pop-up dialog')
@@ -25,7 +35,7 @@ print('Extracting relevant meta data from xml file...')
 coeffs, times=xml_info(folder_loc,xml_name_list)
 
 print('Improrting imagery as time series and applying Top-of-atmosphere coefficients...')
-#Import imagery, apply TOA reflectance coefficients 
+#Import imagery, apply TOA reflectance coefficients
 img_ts_ref, easting_vec,northing_vec=import_imgry_norm (folder_loc,img_name_list,coeffs)
 
 
@@ -40,14 +50,19 @@ mask_ts=import_mask(folder_loc,mask_name_list)
 
 
 print('Applying generated mask...')
-#Apply time series mask to data 
+#Apply time series mask to data
 ndvi_ts_masked=apply_mask(mask_ts,ndvi_ts)
 
 
-print('Calculating rate of change between green vegetation and bare soil...')
+print('Conducting change detection analysis...')
 # Carry out time series analysis
-class_threshold= np.array([[0, 0.4], [0.5, np.max(ndvi_ts_masked)]])  #find way to automate calculation
-img_2_img_time_diff, class_ts, delta_class_ts, delta_GV_SO=ts_analysis(ndvi_ts_masked, times,class_threshold, mask_ts)
+threshold_val=.4
+class_threshold= np.array([[0, threshold_val], [threshold_val, np.max(ndvi_ts_masked)]])  #find way to automate calculation
+img_2_img_time_diff, class_ts, delta_class_ts=ts_analysis(ndvi_ts_masked, times,class_threshold, mask_ts)
+
+start_class=2
+end_class=1
+delta_GV_SO= calc_rate_of_change(img_2_img_time_diff,delta_class_ts, start_class, end_class)
 
 print('Generating NDVI figures in '+folder_loc+'Output/NDVI/ ...')
 #Plot NDVI
@@ -58,8 +73,17 @@ plot_ndvi_ts(ndvi_ts_masked, times, easting_vec,northing_vec, min_col,max_col,co
 
 print('Generating classification figures in '+folder_loc+'Output/Classification/ ...')
 #Plot classification
-class_names=['Unclassified', 'Soil', 'Vegetation','Mask']
+class_names=['Unclassified', 'Soil', 'Vegetation']
 plot_classification(class_ts, times, easting_vec,northing_vec,folder_loc,class_names)
+
+
+
+
+    
+print('Generating classification figures in '+folder_loc+'Output/Change_Detection/ ...')
+plot_class_diff(delta_class_ts, times, easting_vec,northing_vec,folder_loc,class_names,mask_ts)
+
+
 
 print()
 print('---Program complete---')
@@ -74,14 +98,3 @@ print()
 print('--Rate of change from green vegetation to baren soil between sequential dates--')
 for i in range(len(times)-1):
     print('Date '+str(i+1)+' to Date '+str(i+2)+": "+ str(round(delta_GV_SO[i]))+ " m^2/day" )
-
-
-
-
-
-
-
-
-
-
-
