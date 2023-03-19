@@ -1,11 +1,19 @@
 #Required libraries
 from Function_Definitions import prep_4_import, xml_info, import_imgry_norm, calc_ndvi, import_mask, apply_mask, plot_ndvi_ts, ts_analysis, plot_classification
 import numpy as np
+from tkinter.filedialog import askdirectory
+
+
 
 #input parameters
 folder_loc='D:\Planet_Techical_Assignment\Assessment\data'
-
 print('---PSScene4Band Imagery Time Series Analyzer----')
+print()
+print('Select the folder location of the time series data using the pop-up dialog')
+
+#folder_loc=askdirectory()
+
+
 print()
 print('Preparing and extracting file information...')
 #Extract list of files sorted by date and mosiac images from the same day
@@ -46,7 +54,7 @@ print('Generating NDVI figures in '+folder_loc+'Output/NDVI/ ...')
 min_col=0
 max_col=1
 color_mapping='YlGn'
-#plot_ndvi_ts(ndvi_ts_masked, times, easting_vec,northing_vec, min_col,max_col,color_mapping,folder_loc)
+plot_ndvi_ts(ndvi_ts_masked, times, easting_vec,northing_vec, min_col,max_col,color_mapping,folder_loc)
 
 print('Generating classification figures in '+folder_loc+'Output/Classification/ ...')
 #Plot classification
