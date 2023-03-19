@@ -1,5 +1,5 @@
 # PSScene4Band Imagery Time Series Analyzer
-##Program Description
+## Program Description
 
 The PSScene4Band Imagery Time Series Analyzer is designed to analyze a set of
 PS2 images (item_type:PSScene4Band). The analysis quantifies the rate of change
@@ -15,19 +15,29 @@ image series.
 
 ## Install required library
 1) Navigate to the folder location using the command line
-2) Run "-m pip install -r requirements.txt"
+2) Run "pip install -r requirements.txt"
 
 ## Running Progam
 1) Navigate to the folder location using the command line
 2) Run main.py
 3) When prompted, navigate to the "Data" folder in the downloaded directory
-4) The results will be printed in the console. Go to the indentified directories
-to see the auxilary data files. 
+4) The results will be printed in the console. Go to the "Output" directory in 
+the "Data" folder to see additional data figures.
 
 # Additional Details About Program
 
-
-
+## High-level flowchart
+1) Extract file names of images, UDM and xml files.
+2) Extract relevant meta data from xml files (including TOA-Coefficients)
+3) Import imagery and apply TOA-Coefficients
+4) Calculate NDVI
+5) Import masks from UDM files and merge into a single mask. 
+6) Apply mask to NDVI imagery
+7) Thresold NDVI to classify imagery into vegetation and soil. Perform change
+detection on a pixel-by-pixel basis between sequential data aquisitions.
+8) Calculate rate of change from vegetation class to soil class between
+sequential data aquistions
+9) Plot NDVI images, classification images, and change detection images
 
 
 Soil can be differentiated from green vegetaion via the chloropyl absoption feature and the red edge. As such NVDI and Greenness spectral indices should be able to differentiate between the two materials.

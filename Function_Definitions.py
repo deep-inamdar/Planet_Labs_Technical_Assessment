@@ -119,12 +119,14 @@ def prep_4_import(folder_loc):
 
     # Obtain a list of files in directory
     folder_dir = os.listdir(folder_loc)
-
+    folder_dir = [i for i in folder_dir if not i.startswith('.')]
+    
     # Extract dates from file names
     # First 8 digits represent the date
-    folder_dir_dates = [(i[:8]) for i in folder_dir[:-1]]
+    folder_dir_dates = [(i[:8]) for i in folder_dir]
     unq_dates = list(set(folder_dir_dates))
-    unq_dates.sort(key = int)
+    unq_dates.sort()
+    unq_dates = unq_dates[:-1]
 
     #Define unique ending string of images, UDM files, and xml files
     img_str='_3B_AnalyticMS_clip.tif'
@@ -706,4 +708,4 @@ def plot_class_diff(delta_class_ts, times, easting_vec,northing_vec,folder_loc,c
         plt.savefig(folder_loc+'Output/Change_Detection/'+'Classification_Date_'+str(i+1)+'_to_Date_'+str(i+2), dpi=200, bbox_inches='tight', pad_inches=0.7)
         plt.close('all')
         #plt.show()
-        
+    
