@@ -1,15 +1,16 @@
-# Planet_Labs_Technical_Assessment
+# PSScene4Band Imagery Time Series Analyzer
+##Program Description
 
-Take Home Test for Planet Labs Interview (March-2023)
-## Task
+The PSScene4Band Imagery Time Series Analyzer is designed to analyze a set of
+PS2 images (item_type:PSScene4Band). The analysis quantifies the rate of change
+from green vegetation to bare soil over the time period represented by the 
+image series.
 
-The data folder includes GeoTIFFs and metadata files for a number of PlanetScope acquisitions over Sumatra between June and September, 2020. The AnalyticMS files are analytic assets from PSScene4Band imagery; the udm2 files are Usable Data Masks; and the metadata.json files include the full imagery footprint, acquisition times, and additional metadata. All raster data is clipped to the same extent (which is different than the full imagery footprints).
 
-Your task is to write a program that analyzes the imagery and produces an approximate measure indicating the rate of change from green vegetation to bare soil over the time period represented by the image series.
+# Instructions
 
-In submitting your task, please provide instructions on running your program and include any additional detail describing the choices you made or issues you encountered.
 
-# Proggram Instructions
+
 
 # Additional Details About Program
 
@@ -33,3 +34,15 @@ Band 1 of the UDM file was used as the image mask since we were not interested i
 6) There were slightly different atmospheric coeffiencts between the two halves of the 20200727 imagery. I decided to use the coefficents form the first image on both under the assumption that the atmospheric differences between the two images were negligble (which they should be if data was collected under stable illumination connditions).
 7) Since all of the images are from the same size, we dont need to spatially subset the data...it would have been nice to add image check function to see if all images have the same transform
 8) It was unclear 
+9) only data files can be located in folder location... otherwise program fails. this can create issues when analyzing data with other files stored in same directory as imaging datasets
+
+
+
+# overveiw 
+
+#running
+
+
+
+#extensions
+
