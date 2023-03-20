@@ -57,10 +57,11 @@ spectral differences are captured by the normalized difference vegetation index
 (NDVI), which looks at the normalized difference between the NIR and red band:
 
 $$
-(\rho _{NIR}-\rho_{red})/(\rho _{NIR} +\rho_{red}
+NDVI = (\rho _{NIR}-\rho_{red})/(\rho _{NIR} +\rho_{red})
 $$
 
-
+where $\rho _{NIR}$ and $\rho _{red}$ rerpresent reflectance in the red and NIR 
+bands, respectively.
 
 Due to the chlorophyll absorption feature, large NDVI values are assoicated
 with vegetation. Lower values that approach zero are typically associated with
@@ -71,10 +72,14 @@ between sequential images can be calculated. Specifically, the rate of
 change from "green vegetation" to "bare soil" between time sequential images was
 calculated using the following expression:
 
-
-
-
-
+$$
+R_{veg_to_soil}= N_pix(class_{veg,t_1},class_{veg,t_2})*Res^2/(t_2-t_1)
+$$
+where $R_{veg_to_soil}$ represents the rate of change (m^2/day) from vegetation
+to soil, $N_pix(class_{veg,t_1},class_{veg,t_2})$ represents the number of pixels
+that were classified as vegetation at time 1 ($t_1$) and soil at time 2 ($t_2$),
+and $Res$ represents the spatial resolution of each pixel (3 m). It is important
+to note that the rate of change calculation is directional (i.e., R_{veg_to_soil}≠ -R_{soil_to_veg}.
 
 ## Challenges
 1) 
