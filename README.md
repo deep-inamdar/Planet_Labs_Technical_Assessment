@@ -13,14 +13,14 @@ image series.
 1) Open the provided GitHub repository
 2) Click the green "code" button 
 3) Download ZIP to desired location 
-4) Unzip folder to dersired location
+4) Unzip folder to desired location
 
 ## Install Required Libraries
 1) Open Command Prompt (Windows) or Terminal (macOS)
 2) Change directory to unzipped folder (".../Planet_Labs_Technical_Assessment-main")
 3) Run "pip install -r requirements.txt"
 
-## Running Progam
+## Running Program
 1) Change directory to unzipped folder (".../Planet_Labs_Technical_Assessment-main")
 2) Run the code: "python main.py"
 3) When prompted, select the data folder
@@ -42,7 +42,7 @@ image series.
    detection on a pixel-by-pixel basis between sequential data acquisitions
 8) Calculate rate of change from vegetation class to soil class between
    sequential data acquisitions
-9) Plot NDVI images, classification images, and change detection images
+9) Plot NDVI images, classification images and change detection images
 
 ## Inputs Parameters
 
@@ -57,7 +57,7 @@ UDM2:  "YYYYMMDD_hhmmss_*_3B_udm2_clip.tif"
 
 where the leading "YYYYMMDD_hhmmss" represents the year, month, day, hour,
 minute and second of the data acquisition. The asterisk (*) represents a wild
-card that represents additional information about the satelite ID. 
+card that represents additional information about the satellite ID. 
 
 ## Output Parameters
 
@@ -154,9 +154,9 @@ landscape changed across the scene and at what scale.
    thus needed to be mosaiced with the other images collected on the same day to
    cover the analyzed scene. The program automatically mosaics images that need 
    to be merged. Automatic image mosaicing only merges images collected on 
-   the same day (if one half of a data acquisition was collected at 11:59 PM 
+   the same day. As such, if one half of a data acquisition was collected at 11:59 PM 
    on the 1st, and the second half was collected at 12:00 AM on the 2nd, 
-   they would be treated as different time series entries). This issue could be 
+   they would be treated as different time series entries. This issue could be 
    eliminated by merging files based on the time difference between sequential 
    images (reported in img_2_img_time_diff variable). This process would need 
    to be repeated while there is at least one element in the img_2_img_time_diff
@@ -174,8 +174,8 @@ landscape changed across the scene and at what scale.
    different types of changes (e.g., vegetation to soil). The functions were also
    designed to handle multiple classes that can be differentiated by 
    thresholding NDVI. For instance, the program could be modified to identify
-   soil, sparse vegatation and dense vegation classes to understand how the
-   scene is change over the growing period. 
+   soil, sparse vegetation and dense vegetation classes to understand how the
+   scene is change over the growing period.
 4) The time series mask could be expanded to remove water from the scene using 
    spectral indices that exploit information in the blue end of the spectrum.
    In this analysis, NDVI<0 were unclassified. Given that water typically has a 
@@ -196,8 +196,8 @@ landscape changed across the scene and at what scale.
    extracting them.
 7) Although outside the scope of the project, the rate of change between all 
    classes could be calculated to provide further insight to the scene. In this
-   assignemnt, we assessed the transition from vegetation to soil, which is
+   assignment, I assessed the transition from vegetation to soil, which is
    interesting as it idenified areas of potential forest loss. It would equally
-   be interesting to look at the rate of change from soil to vegeation as it 
-   would provide insight into how the vegeation expands and greens up in the 
+   be interesting to look at the rate of change from soil to vegetation as it 
+   would provide insight into how the vegetation expands and greens up in the 
    summer season. 
