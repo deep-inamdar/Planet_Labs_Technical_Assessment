@@ -77,6 +77,10 @@ of images. The plot showcases how the class of each pixel changes from one image
 to the next time sequential image. The files are
 located in the following directory: ".../Planet_Labs_Technical_Assessment-main/Data/Output/Change_Detection"
 
+*** Although the program will generate the files above, the expected output  ***
+*** can be found in the following directory:                                 ***
+*** .../Planet_Labs_Technical_Assessment-main/Expected_Output/               ***
+
 ## Theoretical Background
 
 The developed function produces an approximate measure indicating the rate of 
