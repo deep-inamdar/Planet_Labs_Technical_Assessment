@@ -69,7 +69,17 @@ soil (due to the gradually increasing reflectance spectrum from the red to the
 NIR). As such, NDVI can be thresholded to classify pixels as either vegetation
 or soil. 
 
-Various thesholds were tested (see additional tests folder)
+$$
+
+\left\{ 
+  \begin{array}{ c l }
+    \frac{x^2 - x}{2} & \quad \textrm{if } x \geq 1 \\
+    0                 & \quad \textrm{otherwise}
+  \end{array}
+\right.
+
+$$
+Various thesholds were tested (Threshold=0.1,0.2,0.3,0.4,0.5,0.6).
 
 
 After classifying the imagery from each date, the rate of change
