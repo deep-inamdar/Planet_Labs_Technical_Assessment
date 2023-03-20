@@ -61,7 +61,7 @@ card that represents additional information about the satellite ID.
 
 ## Output Parameters
 
-Rate of change: The rate of change(m^2/day) from green vegetation to 
+Rate of change: The rate of change (m^2/day) from green vegetation to 
 bare soil for each time sequential pair of images. This information is printed
 in the console after running main.py.
 
