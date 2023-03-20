@@ -73,10 +73,10 @@ change from "green vegetation" to "bare soil" between time sequential images was
 calculated using the following expression:
 
 $$
-R_{veg \_ to \_ soil}= N_{pix}(class_{veg,t_1},class_{veg,t_2})*Res^2/(t_2-t_1)
+R_{veg &#95 to &#95 soil}= N_{pix}(class_{veg,t_1},class_{veg,t_2})*Res^2/(t_2-t_1)
 $$
 
-where $R_{veg \_ to \_ soil}$ represents the rate of change (m^2/day) from vegetation
+where $R_{veg &#95 to &#95 soil}$ represents the rate of change (m^2/day) from vegetation
 to soil, $N_pix(class_{veg,t_1},class_{veg,t_2})$ represents the number of pixels
 that were classified as vegetation at time 1 ($t_1$) and soil at time 2 ($t_2$),
 and $Res$ represents the spatial resolution of each pixel (3 m). It is important
