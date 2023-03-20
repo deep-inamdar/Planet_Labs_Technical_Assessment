@@ -103,15 +103,15 @@ NIR). As such, NDVI can be thresholded to classify pixels as either vegetation
 or soil: 
 
 $$
-Class = Vegetation \: if \: NDVI > Threshold 
+Class = Vegetation \ if \ NDVI > Threshold 
 $$
 
 $$
-Class = Soil \: if \: Threshold >= NDVI > 0 
+Class = Soil \ if \ Threshold >= NDVI > 0 
 $$
 
 $$
-Class = Unclassified \: if \: NDVI < 0 
+Class = Unclassified \ if \ NDVI < 0 
 $$
 
 In this analysis, various thresholds were tested(Threshold=0.1,0.2,0.3,0.4,0.5,
