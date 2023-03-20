@@ -9,13 +9,13 @@ image series.
 
 # Instructions
 
-## Download repository to local folder
+## Download Repository to Local Folder
 1) Open link to GitHub repository
 2) Click the green " <> code" button 
 3) Download ZIP to desired location 
 4) Unzip folder to dersired location
 
-## Install required libraries
+## Install Required libraries
 1) Open Command Prompt (Windows) or Terminal (macOS)
 2) Change directory to unzipped folder ("Planet_Labs_Technical_Assessment-main")
 3) Run "pip install -r requirements.txt"
@@ -24,7 +24,7 @@ image series.
 1) Change directory to unzipped folder ("Planet_Labs_Technical_Assessment-main")
 2) Run the code: "Python main.py"
 3) When prompted, select to the data folder
-   (.../Planet_Labs_Technical_Assessment-main/Data") in the pop-up prompt
+   (.../Planet_Labs_Technical_Assessment-main/Data") in the pop-up prompt.
 4) The results will be printed in the console. Go to the output directory in 
    (.../Planet_Labs_Technical_Assessment-main/Data/Output") to see additional 
    data figures.
@@ -75,26 +75,23 @@ calculated using the following expression:
 $$
 R_{veg_to_soil}= N_pix(class_{veg,t_1},class_{veg,t_2})*Res^2/(t_2-t_1)
 $$
+
 where $R_{veg_to_soil}$ represents the rate of change (m^2/day) from vegetation
 to soil, $N_pix(class_{veg,t_1},class_{veg,t_2})$ represents the number of pixels
 that were classified as vegetation at time 1 ($t_1$) and soil at time 2 ($t_2$),
 and $Res$ represents the spatial resolution of each pixel (3 m). It is important
 to note that the rate of change calculation is directional (i.e., R_{veg_to_soil}≠ -R_{soil_to_veg}.
 
-## Challenges
-1) 
-
-
-
  
 2) The Term "green vegetation" was difficult to interprete (i.e., what is considered green vegetation?). This challenge is handled by defined green vegetation based on the green absoption feature.
-3) Image 2 was broken into two halves. need to merge them
-6) There were slightly different atmospheric coeffiencts between the two halves of the 20200727 imagery. I decided to use the coefficents form the first image on both under the assumption that the atmospheric differences between the two images were negligble (which they should be if data was collected under stable illumination connditions).
-7) Since all of the images are from the same size, we dont need to spatially subset the data...it would have been nice to add image check function to see if all images have the same transform
-8) It was unclear 
+
+
+
 9) only data files can be located in folder location... otherwise program fails. this can create issues when analyzing data with other files stored in same directory as imaging datasets
 
-## Potential Future Improvements
+## Challenges and Potential Future Improvements
+
+1) The NDVI threshold 
 
 1) Automatic image mosaicing is not comprehensive and only merges images 
    collected on the same day(if one half of a data aquistion was collected at 
@@ -103,7 +100,7 @@ to note that the rate of change calculation is directional (i.e., R_{veg_to_soil
    eliminate by merging files based on the time difference between sequential 
    images (reported in img_2_img_time_diff variable). This process would need 
    to be repeated while there is atleast one element in the img_2_img_time_diff
-   variable was less than a given time difference threshold (e.g., 1 hour). 
+   variable that was less than a given time difference threshold (e.g., 1 hour). 
 2) Image mosaicing occurs before the Top-of-atmosphere coefficents are applied.
    As such the TOA-coefficents from the first image are applied to both
    mosaiced images. Although this may be an issue that could be mitigated by
@@ -125,4 +122,14 @@ to note that the rate of change calculation is directional (i.e., R_{veg_to_soil
    analyzed scene, there was only one easily visible water body. Given that
    that this body changed to soil, throughout the time series, this cloud imply
    that the body of water was shallow and dried up in the summer.
+5) The python script was developed and tested on a windows 10 machine. While
+   testing the program in macOS, various bugs appeared. Although these bugs were
+   resolved, the program should be stress tested on a variety of operating 
+   systems. 
+6) No additional data files or folders (other than the output
+   folder that is generated while running the program) can be present in the 
+   data folder otherwise the program will fail. This is due to how the program 
+   parses the file names. This issue could be resolved by requiring users to
+   manually input the name of the files to be analzyed instead of automatically
+   extracting them. 
 

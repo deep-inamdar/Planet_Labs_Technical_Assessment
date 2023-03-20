@@ -8,7 +8,6 @@ Author: Deep Inamdar
 """
 
 
-
 #Required Libraries
 import os
 import fnmatch
@@ -44,7 +43,7 @@ def merge_rasters(folder_loc,raster_names):
     mos_name : list of single string, size= 1
         A list containing a string with the name of the mosaiced file. 
     """
-    
+
     #Create folder for mosaiced image
     is_exist = os.path.exists(folder_loc+'Output/Mosaic')
     if not is_exist:
@@ -119,8 +118,9 @@ def prep_4_import(folder_loc):
 
     # Obtain a list of files in directory
     folder_dir = os.listdir(folder_loc)
+    # Eliminate hidden mac os files
     folder_dir = [i for i in folder_dir if not i.startswith('.')]
-    
+
     # Extract dates from file names
     # First 8 digits represent the date
     folder_dir_dates = [(i[:8]) for i in folder_dir]
@@ -169,8 +169,8 @@ def prep_4_import(folder_loc):
 
 def xml_info(folder_loc,xml_name_list):
     """
-    Extracts relevant information (Top-of-atmosphere(TOA) coefficents, and data
-    aquistion times) from xml files. 
+    Extracts relevant information (Top-of-atmosphere(TOA) coefficients, and data
+    aquisition times) from xml files. 
 
     Parameters
     ----------
@@ -184,9 +184,9 @@ def xml_info(folder_loc,xml_name_list):
     Returns
     -------
     coeffs: Array of float64, size= (n,b)
-        An array of the top of Top-of-atmosphere(TOA) coefficents for band, b,
+        An array of the top of Top-of-atmosphere(TOA) coefficients for band, b,
         and image n. Each row corresponds with a different image while each 
-        column corresponds with a coefficent for a different band. 
+        column corresponds with a coefficient for a different band. 
     times: array of datetime objects, size=(n,1)
         An array of the dates/times associated with each time series image.
     """
@@ -209,7 +209,7 @@ def xml_info(folder_loc,xml_name_list):
         date_time = nodes_time[0].getElementsByTagName("ps:acquisitionDateTime")[0].firstChild.data
         times[i] = datetime.strptime(date_time[0:19], "%Y-%m-%dT%H:%M:%S")
     resolution= float(xmldoc.getElementsByTagName("eop:resolution")[0].firstChild.data)
-    
+
     return coeffs, times, resolution
 
 
@@ -228,9 +228,9 @@ def import_imgry_norm(folder_loc,img_name_list,coeffs):
         A list of n strings with the names of the time series images to be 
         analyzed. 
     coeffs: Array of float64, size= (n,b)
-        An array of the top of Top-of-atmosphere(TOA) coefficents for band, b,
+        An array of the top of Top-of-atmosphere(TOA) coefficients for band, b,
         and image n. Each row corresponds with a different image while each 
-        column corresponds with a coefficent for a different band. 
+        column corresponds with a coefficient for a different band. 
         
     Returns
     -------
@@ -308,7 +308,6 @@ def calc_ndvi(img_ts_ref):
 
 
 
-
 def import_mask(folder_loc,mask_name_list):
     """
     Extracts information from UDM files and generates a single mask for the 
@@ -381,7 +380,7 @@ def apply_mask(mask_ts,img_ts):
 
 
 
-def ts_analysis(ndvi_ts_masked, times,class_threshold, mask_ts):
+def ts_analysis(ndvi_ts_masked, times, class_threshold, mask_ts):
     """
     Extracts information from UDM files and generates a single mask for the 
     time series analysis. The mask eliminates pixels that are not present in 
@@ -429,7 +428,7 @@ def ts_analysis(ndvi_ts_masked, times,class_threshold, mask_ts):
     tot_pixels = np.zeros([img_dim[0],thresh_dims[0]+1])
     img_2_img_time_diff = np.zeros([len(times)-1])
     delta_class_ts = np.zeros([len(times)-1,img_dim[1],img_dim[2]])
-    
+
     #Calculate days between images
     for i in range(len(times)-1):
         delta = times[i+1]-times [i]
@@ -451,12 +450,12 @@ def ts_analysis(ndvi_ts_masked, times,class_threshold, mask_ts):
     for i in range(img_dim[0]-1):
         delta_class_ts[i,:,:] = (class_ts[i,:,:]+1)*100+(class_ts[i+1,:,:]+1)
     delta_class_ts = apply_mask(mask_ts,delta_class_ts)
-    
+
     return img_2_img_time_diff, class_ts, delta_class_ts
 
 
 
-def calc_rate_of_change(img_2_img_time_diff,delta_class_ts, start_class, end_class, resolution):
+def calc_rate_of_change(img_2_img_time_diff,delta_class_ts,start_class,end_class,resolution):
     """
     Calculate rate of change from starting class to ending class. 
 
@@ -478,13 +477,13 @@ def calc_rate_of_change(img_2_img_time_diff,delta_class_ts, start_class, end_cla
     delta_GV_SO: Array of float64, size= (t-1,) 
         Rate of change (m^2/day) from class 1 to class 2
     """
-    # Number of pixels that tranistioned from vegetation at t=1 to soil at t=2
+    # Number of pixels that transitioned from vegetation at t=1 to soil at t=2
     # Value is multiplied by the resolution squared to convert pixels to m^2
-    # Value is then normalized by days between aquisitions to obtain rate 
+    # Value is then normalized by days between acquisitions to obtain rate
     delta_change = np.zeros(len(img_2_img_time_diff))
     for i in range(len(img_2_img_time_diff)):
         delta_change[i] = np.sum(delta_class_ts[i,:,:] == class_2_transition_code(start_class,end_class))*resolution*resolution/img_2_img_time_diff[i]
-    
+
     return delta_change
 
 
@@ -508,7 +507,7 @@ def class_2_transition_code(start_class,end_class):
     """
 
     transition_code = (start_class+1)*100+(end_class+1)
-    
+
     return transition_code
 
 def transition_code_2_class_code(transition_code):
@@ -529,15 +528,15 @@ def transition_code_2_class_code(transition_code):
     end_class: float
         Value of ending class
     """
-    
+
     end_class = (transition_code % 100)-1
     start_class = (transition_code-end_class-1)/100-1
-    
+
     return start_class, end_class
 
 
 
-def plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,color_mapping,folder_loc):
+def plot_ndvi_ts(ndvi_ts,times,easting_vec,northing_vec,min_col,max_col,color_mapping,folder_loc):
     """
     Plot ndvi_ts data. 
 
@@ -550,9 +549,9 @@ def plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,color
     times: array of datetime objects, size=(n,1)
         An array of the dates/times associated with each time series image.
     easting_vec: Array of float64, size=(x,)
-        Easting postion (m) of each column of the imagery.  
+        Easting position (m) of each column of the imagery.  
     northing_vec: Array of float64, size=(x,)
-        Northing postion (m) of each row of the imagery.
+        Northing position (m) of each row of the imagery.
     min_col: float
         Minimum value of color bar.
     max_col: float
@@ -585,7 +584,7 @@ def plot_ndvi_ts(ndvi_ts, times, easting_vec,northing_vec, min_col,max_col,color
 
 
 
-def plot_classification(class_ts, times, easting_vec,northing_vec,folder_loc,class_names):
+def plot_classification(class_ts,times,easting_vec,northing_vec,folder_loc,class_names):
     """
     Plot classified time series data 
 
@@ -598,9 +597,9 @@ def plot_classification(class_ts, times, easting_vec,northing_vec,folder_loc,cla
     times: array of datetime objects, size=(n,1)
         An array of the dates/times associated with each time series image.
     easting_vec: Array of float64, size=(x,)
-        Easting postion (m) of each column of the imagery.  
+        Easting position (m) of each column of the imagery.  
     northing_vec: Array of float64, size=(x,)
-        Northing postion (m) of each row of the imagery.
+        Northing position (m) of each row of the imagery.
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
         data to be merged (forward slashes only, ends in forward slash).
@@ -640,7 +639,7 @@ def plot_classification(class_ts, times, easting_vec,northing_vec,folder_loc,cla
         plt.close('all')
         #plt.show()
 
-def plot_class_diff(delta_class_ts, times, easting_vec,northing_vec,folder_loc,class_names,mask_ts):
+def plot_class_diff(delta_class_ts,times,easting_vec,northing_vec,folder_loc,class_names,mask_ts):
     """
     Plot classified time series data 
 
@@ -653,9 +652,9 @@ def plot_class_diff(delta_class_ts, times, easting_vec,northing_vec,folder_loc,c
     times: array of datetime objects, size=(n,1)
         An array of the dates/times associated with each time series image.
     easting_vec: Array of float64, size=(x,)
-        Easting postion (m) of each column of the imagery.  
+        Easting position (m) of each column of the imagery.  
     northing_vec: Array of float64, size=(x,)
-        Northing postion (m) of each row of the imagery.
+        Northing position (m) of each row of the imagery.
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
         data to be merged (forward slashes only, ends in forward slash).
@@ -666,24 +665,23 @@ def plot_class_diff(delta_class_ts, times, easting_vec,northing_vec,folder_loc,c
     img_dim = np.shape(delta_class_ts)
     is_exist = os.path.exists(folder_loc+'Output/Change_Detection/')
     if not is_exist:
-        os.makedirs(folder_loc+'Output/Change_Detection/')   
-        
+        os.makedirs(folder_loc+'Output/Change_Detection/')
+
     permutations_classes = np.array(np.meshgrid(range(len(class_names)), range(len(class_names)))).T.reshape(-1,2)
     class_names2 = []
     for i in range(len(permutations_classes)):
         temp_str = class_names[permutations_classes[i,0]]+' to '+class_names[permutations_classes[i,1]]
         class_names2.append(temp_str)
-        
+
     #generate change detection images with int values incrementing by 1
     img_dim2=np.shape(mask_ts)
-    delta_class_ts2 = np.zeros([len(times)-1,img_dim2[0],img_dim2[1]])    
+    delta_class_ts2 = np.zeros([len(times)-1,img_dim2[0],img_dim2[1]])
     for i in range(len(permutations_classes)):
         indx = delta_class_ts == class_2_transition_code(permutations_classes[i,0],permutations_classes[i,1])
         delta_class_ts2[indx] = i
     delta_class_ts2 = apply_mask(mask_ts,delta_class_ts2)
     values = range(len(permutations_classes))
-    
-    
+
     for i in range(img_dim[0]):
         temp_img = delta_class_ts2[i,:,:]
         x = easting_vec
