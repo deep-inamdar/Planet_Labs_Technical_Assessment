@@ -57,7 +57,7 @@ spectral differences are captured by the normalized difference vegetation index
 (NDVI), which looks at the normalized difference between the NIR and red band:
 
 $$
-frac{\rho _NIR-\rho _red}{\rho _NIR+\rho _red}
+(\rho _{NIR}-\rho_{red})/(\rho _{NIR} +\rho_{red}
 $$
 
 
@@ -93,7 +93,7 @@ calculated using the following expression:
 
 1) Automatic image mosaicing is not comprehensive and only merges images 
    collected on the same day(if one half of a data aquistion was collected at 
-   11:59PM on the 1st, and the second half was collected at 12:00am on the 2nd, 
+   11:59 PM on the 1st, and the second half was collected at 12:00 am on the 2nd, 
    they would be treated as different time series entries). This issue could be 
    eliminate by merging files based on the time difference between sequential 
    images (reported in img_2_img_time_diff variable). This process would need 
@@ -120,14 +120,4 @@ calculated using the following expression:
    analyzed scene, there was only one easily visible water body. Given that
    that this body changed to soil, throughout the time series, this cloud imply
    that the body of water was shallow and dried up in the summer.
-
-
-
-# overveiw 
-
-#running
-
-
-
-#extensions
 
