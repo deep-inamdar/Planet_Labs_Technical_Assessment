@@ -15,14 +15,14 @@ image series.
 3) Download ZIP to desired location 
 4) Unzip folder to dersired location
 
-## Install Required :ibraries
+## Install Required Libraries
 1) Open Command Prompt (Windows) or Terminal (macOS)
 2) Change directory to unzipped folder ("Planet_Labs_Technical_Assessment-main")
 3) Run "pip install -r requirements.txt"
 
 ## Running Progam
 1) Change directory to unzipped folder ("Planet_Labs_Technical_Assessment-main")
-2) Run the code: "Python main.py"
+2) Run the code: "python main.py"
 3) When prompted, select to the data folder
    (.../Planet_Labs_Technical_Assessment-main/Data") in the pop-up prompt.
 4) The results will be printed in the console. Go to the output directory in 
@@ -67,7 +67,12 @@ Due to the chlorophyll absorption feature, large NDVI values are assoicated
 with vegetation. Lower values that approach zero are typically associated with
 soil (due to the gradually increasing reflectance spectrum from the red to the
 NIR). As such, NDVI can be thresholded to classify pixels as either vegetation
-or soil. After classifying the imagery from each date, the rate of change
+or soil. 
+
+Various thesholds were tested (see additional tests folder)
+
+
+After classifying the imagery from each date, the rate of change
 between sequential images can be calculated. Specifically, the rate of 
 change from "green vegetation" to "bare soil" between time sequential images was
 calculated using the following expression:

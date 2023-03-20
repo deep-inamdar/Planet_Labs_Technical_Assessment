@@ -11,7 +11,7 @@ Author: Deep Inamdar
 #Required libraries
 from tkinter.filedialog import askdirectory
 import numpy as np
-from Function_Definitions import prep_4_import, xml_info, import_imgry_norm, calc_ndvi, import_mask, apply_mask, plot_ndvi_ts, ts_analysis, plot_classification, calc_rate_of_change, plot_class_diff
+from function_definitions import prep_4_import, xml_info, import_imgry_norm, calc_ndvi, import_mask, apply_mask, plot_ndvi_ts, ts_analysis, plot_classification, calc_rate_of_change, plot_class_diff
 
 #Start Program
 print('---PSScene4Band Imagery Time Series Analyzer----')
@@ -48,7 +48,7 @@ ndvi_ts_masked=apply_mask(mask_ts,ndvi_ts)
 
 # Carry out time series analysis
 print('Conducting change detection analysis...')
-threshold_val=.4
+threshold_val=.40
 class_threshold= np.array([[0, threshold_val], [threshold_val, np.max(ndvi_ts_masked)]])  #find way to automate calculation
 img_2_img_time_diff, class_ts, delta_class_ts=ts_analysis(ndvi_ts_masked,times,class_threshold,mask_ts)
 
