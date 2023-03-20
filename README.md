@@ -154,7 +154,7 @@ landscape changed across the scene and at what scale.
    thus needed to be mosaiced with the other images collected on the same day to
    cover the analyzed scene. The program automatically mosaics images that need 
    to be merged. Automatic image mosaicing only merges images collected on 
-   the same day. As such, if one half of a data acquisition was collected at 11:59 PM 
+   the same day. As such, if one half of a dataset was collected at 11:59 PM 
    on the 1st, and the second half was collected at 12:00 AM on the 2nd, 
    they would be treated as different time series entries. This issue could be 
    eliminated by merging files based on the time difference between sequential 
@@ -162,7 +162,7 @@ landscape changed across the scene and at what scale.
    to be repeated while there is at least one element in the img_2_img_time_diff
    variable that is less than a given time difference threshold (e.g., 1 hour). 
 2) Image mosaicing occurs before the Top-of-atmosphere coefficients are applied.
-   As such the TOA-coefficients from the first image are applied to both
+   As such, the TOA-coefficients from the first image are applied to both
    mosaiced images. Although this may be an issue that could be mitigated by
    moving the image normalization before image mosaicing, coefficients from 
    images separated by 1 second should vary insignificantly. If they do vary 
@@ -171,11 +171,11 @@ landscape changed across the scene and at what scale.
 3) All functions were designed to be generalizable. In this task, I
    was assigned to calculate the rate of change from vegetation to soil. Using
    the developed functions, the program can easily be modified to look at 
-   different types of changes (e.g., vegetation to soil). The functions were also
+   different types of changes (e.g., soil to vegetation). The functions were also
    designed to handle multiple classes that can be differentiated by 
    thresholding NDVI. For instance, the program could be modified to identify
    soil, sparse vegetation and dense vegetation classes to understand how the
-   scene is change over the growing period.
+   scene changes over the growing period.
 4) The time series mask could be expanded to remove water from the scene using 
    spectral indices that exploit information in the blue end of the spectrum.
    In this analysis, NDVI<0 were unclassified. Given that water typically has a 
