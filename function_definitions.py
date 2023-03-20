@@ -703,7 +703,7 @@ def plot_class_diff(delta_class_ts,times,easting_vec,northing_vec,folder_loc,cla
 
         # put those patched as legend-handles into the legend
         plt.legend(handles = patches, bbox_to_anchor = (1.05, 1), loc = 2, borderaxespad = 0. )
-        plt.savefig(folder_loc+'Output/Change_Detection/'+'Classification_Date_'+str(i+1)+'_to_Date_'+str(i+2), dpi=200, bbox_inches='tight', pad_inches=0.7)
+        plt.savefig(folder_loc+'Output/Change_Detection/'+'Change_Detection_Date_'+str(i+1)+'_to_Date_'+str(i+2), dpi=200, bbox_inches='tight', pad_inches=0.7)
         plt.close('all')
         #plt.show()
     
