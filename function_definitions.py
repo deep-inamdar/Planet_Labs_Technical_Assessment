@@ -8,7 +8,7 @@ Author: Deep Inamdar
 """
 
 
-#Required Libraries
+# Load required libraries
 import os
 import fnmatch
 import shutil
@@ -33,7 +33,7 @@ def merge_rasters(folder_loc,raster_names):
     ----------
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
-        data to be mosaiced. 
+        data. 
     raster_names : list of strings, size= n
         List of strings containing the file names of the n images to be 
         mosaiced.
@@ -44,19 +44,19 @@ def merge_rasters(folder_loc,raster_names):
         A list containing a string with the name of the mosaiced file. 
     """
 
-    #Create folder for mosaiced image
+    # Create folder for mosaiced image
     is_exist = os.path.exists(folder_loc+'Output/Mosaic')
     if not is_exist:
         os.makedirs(folder_loc+'Output/Mosaic')
 
-    #Mosaic all files on raster_names
+    # Mosaic all files on raster_names
     raster_to_mosiac = []
     for i in range(len(raster_names)):
         raster = rasterio.open(folder_loc+raster_names[i])
         raster_to_mosiac.append(raster)
     mosaic, output = merge(raster_to_mosiac)
 
-    #Generate meta data for mosaiced image
+    # Generate meta data for mosaiced image
     output_meta = raster.meta.copy()
     output_meta.update(
         {"driver": "GTiff",
@@ -67,7 +67,7 @@ def merge_rasters(folder_loc,raster_names):
     )
     mos_name = "Output/Mosaic/" + raster_names[0][:-4]+"_mos.tif"
 
-    #Write out image
+    # Write out image
     with rasterio.open(folder_loc+mos_name, "w", **output_meta) as m:
         m.write(mosaic)
     mos_name = [mos_name]
@@ -88,7 +88,7 @@ def prep_4_import(folder_loc):
     ----------
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
-        data to be merged. 
+        data. 
 
     Returns
     -------
@@ -103,15 +103,15 @@ def prep_4_import(folder_loc):
         time series images to be analyzed.   
     folder_loc: str
         The location of the folder that contains the PSScene4Band time series 
-        data to be merged (forward slashes only, ends in forward slash). 
+        data (forward slashes only, ends in forward slash). 
     """
 
-    #Ensure that '\' are replaced with '/' and folder directory ends in '/'
+    # Ensure that '\' are replaced with '/' and folder directory ends in '/'
     folder_loc=folder_loc.replace(os.sep, '/')
     if folder_loc[-1] != '/':
         folder_loc += '/'
 
-    #Create folder for output from workflow
+    # Create folder for output from workflow
     is_exist = os.path.exists(folder_loc+'Output')
     if not is_exist:
         os.makedirs(folder_loc+'Output')
@@ -128,12 +128,12 @@ def prep_4_import(folder_loc):
     unq_dates.sort()
     unq_dates = unq_dates[:-1]
 
-    #Define unique ending string of images, UDM files, and xml files
+    # Define unique ending string of images, UDM files, and xml files
     img_str='_3B_AnalyticMS_clip.tif'
     xml_str='_AnalyticMS_metadata_clip.xml'
     udm2_str='_3B_udm2_clip.tif'
 
-    #Identify images to be analyzed and mosaic images from the same day
+    # Identify images to be analyzed and mosaic images from the same day
     img_name_list = []
     for i in range(len(unq_dates)):
         pattern = unq_dates[i]+'*'+img_str
@@ -144,7 +144,7 @@ def prep_4_import(folder_loc):
             matching=merge_rasters(folder_loc,matching)
         img_name_list.append(matching)
 
-    #Identify images to be analyzed and mosaic images from the same day
+    # Identify images to be analyzed and mosaic images from the same day
     mask_name_list = []
     for i in range(len(unq_dates)):
         pattern = unq_dates[i]+'*'+udm2_str
@@ -153,7 +153,7 @@ def prep_4_import(folder_loc):
             matching = merge_rasters(folder_loc,matching)
         mask_name_list.append(matching)
 
-    #Identify xml files to be analyzed
+    # Identify xml files to be analyzed
     xml_name_list = []
     for i in range(len(unq_dates)):
         pattern = unq_dates[i]+'*'+xml_str
@@ -176,9 +176,9 @@ def xml_info(folder_loc,xml_name_list):
     ----------
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
-        data to be merged (forward slashes only, ends in forward slash). 
+        data (forward slashes only, ends in forward slash). 
     xml_name_list, : list of strings, size=n
-        A list of n strings with the names of the UDM files associated with 
+        A list of n strings with the names of the UDM2 files associated with 
         time series images to be analyzed.  
         
     Returns
@@ -191,7 +191,7 @@ def xml_info(folder_loc,xml_name_list):
         An array of the dates/times associated with each time series image.
     """
 
-    #Predefine output variables
+    # Predefine output variables
     coeffs=np.zeros([len(xml_name_list), 4])
     times=np.zeros([len(xml_name_list),1]).astype(datetime)
 
@@ -223,7 +223,7 @@ def import_imgry_norm(folder_loc,img_name_list,coeffs):
     ----------
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
-        data to be merged (forward slashes only, ends in forward slash). 
+        data (forward slashes only, ends in forward slash). 
     img_name_list : list of strings, size=n
         A list of n strings with the names of the time series images to be 
         analyzed. 
@@ -245,28 +245,28 @@ def import_imgry_norm(folder_loc,img_name_list,coeffs):
         Northing postion (m) of each row of the imagery. 
     """
 
-    #Import meta data as a list
+    # Import meta data as a list
     meta_data = []
     for i in range(len(img_name_list)):
         img_meta = rasterio.open(folder_loc+''.join(img_name_list[i])).meta
         meta_data.append(img_meta)
 
-    #Check spatial dimensions to see if all images are the same size
+    # Check spatial dimensions to see if all images are the same size
     spatial_extent_chck = len(set([(j["transform"]) for j in meta_data[:]]))
     if    spatial_extent_chck != 1:
         raise Exception("Image spatial exentents do not match each other. Please check input data")
 
-    #Calculate easting and northing for each column and row, respectively
+    # Calculate easting and northing for each column and row, respectively
     map_info = img_meta.get("transform")
     easting_vec = np.arange(map_info[2],map_info[2]+map_info[0]*(img_meta['width']),map_info[0])
     northing_vec = np.arange(map_info[5],map_info[5]+map_info[4]*(img_meta['height']),map_info[4])
 
-    #Import imagery
+    # Import imagery
     img_ts = np.zeros([len(img_name_list),img_meta['count'],img_meta['height'],img_meta['width']])
     for i in range(len(img_name_list)):
         img_ts[i,:,:,:] = rasterio.open(folder_loc+''.join(img_name_list[i])).read()
 
-    #Normalize imagery using TOA reflectance coefficients
+    # Normalize imagery using TOA reflectance coefficients
     img_ts_ref = np.zeros([len(img_name_list),img_meta['count'],img_meta['height'],img_meta['width']])
     for i in range(len(img_name_list)):
         for j in range(img_meta['count']):
@@ -295,12 +295,12 @@ def calc_ndvi(img_ts_ref):
         respectively.  
     """
 
-    #Set up calculations
+    # Set up calculations
     img_dim = np.shape(img_ts_ref)
     np.seterr(divide = 'ignore', invalid = 'ignore')
     ndvi_ts = np.zeros([img_dim[0],img_dim[2],img_dim[3]])
 
-    #Generate ndvi time series
+    # Generate ndvi time series
     for i in range(img_dim[0]):
         ndvi_ts[i,:,:] = (img_ts_ref[i,3,:,:].astype(float)-img_ts_ref[i,2,:,:].astype(float))/(img_ts_ref[i,3,:,:].astype(float)+img_ts_ref[i,2,:,:].astype(float))
 
@@ -310,7 +310,7 @@ def calc_ndvi(img_ts_ref):
 
 def import_mask(folder_loc,mask_name_list):
     """
-    Extracts information from UDM files and generates a single mask for the 
+    Extracts information from UDM2 files and generates a single mask for the 
     time series analysis. The mask eliminates pixels that are not present in 
     ALL of the time series images. 
 
@@ -318,9 +318,9 @@ def import_mask(folder_loc,mask_name_list):
     ----------
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
-        data to be merged (forward slashes only, ends in forward slash).
+        data (forward slashes only, ends in forward slash).
     mask_name_list: list of strings, size=n
-        A list of n strings with the names of UDM files associated with time
+        A list of n strings with the names of UDM2 files associated with time
         series images to be analyzed.
 
     Returns
@@ -330,23 +330,23 @@ def import_mask(folder_loc,mask_name_list):
         present in ALL of the time series images.
     """
 
-    #Import meta data as a list
+    # Import meta data as a list
     meta_data = []
     for i in range(len(mask_name_list)):
         img_meta = rasterio.open(folder_loc+''.join(mask_name_list[i])).meta
         meta_data.append(img_meta)
 
-    #Check spatial dimensions to see if images are all the same size
+    # Check spatial dimensions to see if images are all the same size
     spatial_extent_chck = len(set([(j["transform"]) for j in meta_data[:]]))
     if    spatial_extent_chck != 1:
         raise Exception("Mask spatial exentents do not match each other. Please check input data")
 
-    #Combine all time series masks from UDM files into a single mask
+    # Combine all time series masks from UDM files into a single mask
     mask_ts = np.ones([img_meta['height'],img_meta['width']])
     for i in range(len(mask_name_list)):
         temp_mask = rasterio.open(folder_loc+''.join(mask_name_list[i])).read(1).astype(bool)
         mask_ts = np.logical_and(mask_ts,temp_mask)
-    #reverse band 1 to generate mask
+    # reverse band 1 to generate mask
     mask_ts = np.invert(mask_ts)
 
     return mask_ts
@@ -355,9 +355,7 @@ def import_mask(folder_loc,mask_name_list):
 
 def apply_mask(mask_ts,img_ts):
     """
-    Extracts information from UDM files and generates a single mask for the 
-    time series analysis. The mask eliminates pixels that are not present in 
-    ALL of the time series images. 
+    Applies mask to a given time series.
 
     Parameters
     ----------
@@ -373,7 +371,11 @@ def apply_mask(mask_ts,img_ts):
     img_ts_masked: Array of float64
         Masked time series. Size is equal to the size of img_ts.
     """
+    
+    # Broadcast mask to same dimensions as time series
     mask_data = np.broadcast_to(mask_ts, img_ts.shape)
+    
+    # Mask time series
     imgs_ts_masked = np.ma.array(img_ts, mask = mask_data)
 
     return imgs_ts_masked
@@ -382,9 +384,10 @@ def apply_mask(mask_ts,img_ts):
 
 def ts_analysis(ndvi_ts_masked, times, class_threshold, mask_ts):
     """
-    Extracts information from UDM files and generates a single mask for the 
-    time series analysis. The mask eliminates pixels that are not present in 
-    ALL of the time series images. 
+    Applies time series analysis. First, the NDVI imagery is thresholded to
+    classify the scene. After a change detection image is generated for each
+    time sequential pair of images, indicated how pixel classes change from
+    one time to another.
 
     Parameters
     ----------
@@ -412,41 +415,38 @@ def ts_analysis(ndvi_ts_masked, times, class_threshold, mask_ts):
     delta_class_ts: Transition image between sequential time series images.
         Each value represent a distinct transition from one class to another.
         Please use transition_code_2_class to identify which codes correspond 
-        to which transitions. 
-    delta_GV_SO: Array of float64, size= (t-1,) 
-        Rate of change (m^2/day) from green vegetation to barren soil
-        between sequential time series images. 
+        to which transitions.     
     """
 
-    #Get dimensions of ndvi time series and class threshold
+    # Get dimensions of ndvi time series and class threshold
     thresh_dims = np.shape(class_threshold)
     img_dim = np.shape(ndvi_ts_masked)
 
-    #Predefine output variables
+    # Predefine output variables
     class_ts = np.zeros(img_dim)
     class_ts = apply_mask(mask_ts,class_ts)
     tot_pixels = np.zeros([img_dim[0],thresh_dims[0]+1])
     img_2_img_time_diff = np.zeros([len(times)-1])
     delta_class_ts = np.zeros([len(times)-1,img_dim[1],img_dim[2]])
 
-    #Calculate days between images
+    # Calculate days between images
     for i in range(len(times)-1):
         delta = times[i+1]-times [i]
         img_2_img_time_diff[i] = delta[0].total_seconds()/60/60/24
 
-    #Generate classififed time series data cube and count number of pixels in each class
+    # Generate classififed time series data cube and count number of pixels in each class
     for i in range(thresh_dims[0]):
         indx = np.logical_and(ndvi_ts_masked > class_threshold[i,0],ndvi_ts_masked <= class_threshold[i,1])
         class_ts[indx] = i+1
 
-    #Calculate number of pixels in each class
+    # Calculate number of pixels in each class
     for i in range(img_dim[0]):
         for j in range(thresh_dims[0]+1):
             tot_pixels[i,j] = np.sum(class_ts[i,:,:] == (j+1))
             if j == thresh_dims[0]:
                 tot_pixels[i,j] = np.sum(class_ts[i] == 0)
 
-    #Generate change map between time sequential images
+    # Generate change map between time sequential images
     for i in range(img_dim[0]-1):
         delta_class_ts[i,:,:] = (class_ts[i,:,:]+1)*100+(class_ts[i+1,:,:]+1)
     delta_class_ts = apply_mask(mask_ts,delta_class_ts)
@@ -477,7 +477,7 @@ def calc_rate_of_change(img_2_img_time_diff,delta_class_ts,start_class,end_class
     delta_GV_SO: Array of float64, size= (t-1,) 
         Rate of change (m^2/day) from class 1 to class 2
     """
-    # Number of pixels that transitioned from vegetation at t=1 to soil at t=2
+    # Number of pixels that transitioned from class 1 at t=1 to class 2 at t=2
     # Value is multiplied by the resolution squared to convert pixels to m^2
     # Value is then normalized by days between acquisitions to obtain rate
     delta_change = np.zeros(len(img_2_img_time_diff))
@@ -512,9 +512,9 @@ def class_2_transition_code(start_class,end_class):
 
 def transition_code_2_class_code(transition_code):
     """
-    Identify value of pixel from delta_class_ts at which pixel transitions from 
-    the starting class to the ending class.
-
+    Identify the starting class to the ending class from value of pixel from 
+    delta_class_ts 
+    
     Parameters
     ----------
     Transition_code: float
@@ -560,7 +560,7 @@ def plot_ndvi_ts(ndvi_ts,times,easting_vec,northing_vec,min_col,max_col,color_ma
         Color map str.
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
-        data to be merged (forward slashes only, ends in forward slash).
+        data (forward slashes only, ends in forward slash).
     """
 
     img_dim = np.shape(ndvi_ts)
@@ -602,7 +602,7 @@ def plot_classification(class_ts,times,easting_vec,northing_vec,folder_loc,class
         Northing position (m) of each row of the imagery.
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
-        data to be merged (forward slashes only, ends in forward slash).
+        data (forward slashes only, ends in forward slash).
     class_names= list of strings size=3
         List of strings containing the names of the classes
     """
@@ -626,14 +626,14 @@ def plot_classification(class_ts,times,easting_vec,northing_vec,folder_loc,class
         plt.xticks(rotation = 45)
         plt.ylabel("Northing (m)- WGS 84 / UTM zone 48S")
 
-        # get the colors of the values, according to the unique values
-        # colormap used by imshow
+        # Get the colors of the values, according to the unique values
+        # Colormap used by imshow
         colors = [ im.cmap(im.norm(value)) for value in values[range(len(values)-1)]]
 
-        # create a patch (proxy artist) for every color
+        # Create a patch (proxy artist) for every color
         patches = [ mpatches.Patch(color=colors[j], label = class_names[j]) for j in range(len(values)-1) ]
 
-        # put those patched as legend-handles into the legend
+        # Put those patched as legend-handles into the legend
         plt.legend(handles = patches, bbox_to_anchor = (1.05, 1), loc = 2, borderaxespad = 0. )
         plt.savefig(folder_loc+'Output/Classification/'+'Classification_Date_'+str(i+1), dpi=200, bbox_inches='tight', pad_inches=0.7)
         plt.close('all')
@@ -657,7 +657,7 @@ def plot_class_diff(delta_class_ts,times,easting_vec,northing_vec,folder_loc,cla
         Northing position (m) of each row of the imagery.
     folder_loc : str
         The location of the folder that contains the PSScene4Band time series 
-        data to be merged (forward slashes only, ends in forward slash).
+        data (forward slashes only, ends in forward slash).
     class_names= list of strings size=3
         List of strings containing the names of the classes
     """
@@ -673,7 +673,7 @@ def plot_class_diff(delta_class_ts,times,easting_vec,northing_vec,folder_loc,cla
         temp_str = class_names[permutations_classes[i,0]]+' to '+class_names[permutations_classes[i,1]]
         class_names2.append(temp_str)
 
-    #generate change detection images with int values incrementing by 1
+    # Generate change detection images with int values incrementing by 1
     img_dim2=np.shape(mask_ts)
     delta_class_ts2 = np.zeros([len(times)-1,img_dim2[0],img_dim2[1]])
     for i in range(len(permutations_classes)):
@@ -694,14 +694,14 @@ def plot_class_diff(delta_class_ts,times,easting_vec,northing_vec,folder_loc,cla
         plt.xticks(rotation = 45)
         plt.ylabel("Northing (m)- WGS 84 / UTM zone 48S")
 
-        # get the colors of the values, according to the unique values
-        # colormap used by imshow
+        # Get the colors of the values, according to the unique values
+        # Colormap used by imshow
         colors = [ im.cmap(im.norm(value)) for value in values]
 
-        # create a patch (proxy artist) for every color
+        # Create a patch (proxy artist) for every color
         patches = [ mpatches.Patch(color=colors[j], label= class_names2[j]) for j in range(len(values)) ]
 
-        # put those patched as legend-handles into the legend
+        # Put those patched as legend-handles into the legend
         plt.legend(handles = patches, bbox_to_anchor = (1.05, 1), loc = 2, borderaxespad = 0. )
         plt.savefig(folder_loc+'Output/Change_Detection/'+'Change_Detection_Date_'+str(i+1)+'_to_Date_'+str(i+2), dpi=200, bbox_inches='tight', pad_inches=0.7)
         plt.close('all')
