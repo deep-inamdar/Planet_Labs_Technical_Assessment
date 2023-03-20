@@ -15,7 +15,7 @@ image series.
 3) Download ZIP to desired location 
 4) Unzip folder to dersired location
 
-## Install Required libraries
+## Install Required :ibraries
 1) Open Command Prompt (Windows) or Terminal (macOS)
 2) Change directory to unzipped folder ("Planet_Labs_Technical_Assessment-main")
 3) Run "pip install -r requirements.txt"
@@ -73,10 +73,10 @@ change from "green vegetation" to "bare soil" between time sequential images was
 calculated using the following expression:
 
 $$
-R_{veg_to_soil}= N_pix(class_{veg,t_1},class_{veg,t_2})*Res^2/(t_2-t_1)
+R_{veg\_to\_soil}= N_{pix}(class_{veg,t_1},class_{veg,t_2})*Res^2/(t_2-t_1)
 $$
 
-where $R_{veg_to_soil}$ represents the rate of change (m^2/day) from vegetation
+where $R_{veg\_to\_soil}$ represents the rate of change (m^2/day) from vegetation
 to soil, $N_pix(class_{veg,t_1},class_{veg,t_2})$ represents the number of pixels
 that were classified as vegetation at time 1 ($t_1$) and soil at time 2 ($t_2$),
 and $Res$ represents the spatial resolution of each pixel (3 m). It is important
