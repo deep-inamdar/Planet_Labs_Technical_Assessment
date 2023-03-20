@@ -32,23 +32,23 @@ image series.
 # Additional Details About Program
 
 ## High-Level Flowchart
-1) Extract file names of images, UDM and xml files.
+1) Extract file names of images, UDM2 and xml files
 2) Extract relevant meta data from xml files (including TOA-Coefficients)
 3) Import imagery and apply TOA-Coefficients
-4) Calculate NDVI for imagery time series.
-5) Import masks from UDM files and merge into a single mask. 
+4) Calculate NDVI for imagery time series
+5) Import masks from UDM2 files and merge into a single mask
 6) Apply mask to NDVI imagery time series
 7) Threshold NDVI to classify imagery into vegetation and soil. Perform change
-   detection on a pixel-by-pixel basis between sequential data acquisitions.
+   detection on a pixel-by-pixel basis between sequential data acquisitions
 8) Calculate rate of change from vegetation class to soil class between
-   sequential data acquistions
+   sequential data acquisitions
 9) Plot NDVI images, classification images, and change detection images
 
 ## Inputs Parameters
 
 Location of data files: The program asks the user to navigate to the data folder
 which contains the AnalyticMS files from the PSScene4Band imagery (along with 
-*.xml meta data) and the usable data mask (udm2) files. The format for each
+*.xml meta data) and the usable data mask (UDM2) files. The format for each
 file is defined as follows:
 
 Imagery: "YYYYMMDD_hhmmss_*_3B_AnalyticMS_clip.tif"
@@ -84,11 +84,11 @@ can be found in the following directory: .../Planet_Labs_Technical_Assessment-ma
 
 The developed function produces an approximate measure indicating the rate of 
 change from "green vegetation" to "bare soil" over the time period represented 
-by the image series. To acomplish this task, the imagery first needed to be 
+by the image series. To accomplish this task, the imagery first needed to be 
 classified into vegetation and soil classes. Spectrally, vegetation and soil are
 quite distinct. Where soil generally increases from the blue to the NIR, 
 vegetation is typically characterized by a chlorophyll absorption feature that
-results in poor reflectance in the red portion of the reflectance. These key
+results in poor reflectance in the red portion of the spectrum. These key
 spectral differences are captured by the normalized difference vegetation index
 (NDVI), which looks at the normalized difference between the NIR and red band:
 
@@ -146,7 +146,7 @@ to note that the rate of change calculation is directional (i.e., R_{veg_to_soil
 
 In addition to the rate of change, a change detection image was generated for 
 each pair of time sequential images. These images provided insight into how the 
-landscape change across the scene and at what scale. 
+landscape changed across the scene and at what scale. 
 
 ## Challenges and Potential Future Improvements
 
@@ -154,13 +154,13 @@ landscape change across the scene and at what scale.
    thus needed to be mosaiced with the other images collected on the same day to
    cover the analyzed scene. The program automatically mosaics images that need 
    to be merged. Automatic image mosaicing only merges images collected on 
-   the same day(if one half of a data acquistion was collected at 11:59 PM 
-   on the 1st, and the second half was collected at 12:00 am on the 2nd, 
+   the same day (if one half of a data acquisition was collected at 11:59 PM 
+   on the 1st, and the second half was collected at 12:00 AM on the 2nd, 
    they would be treated as different time series entries). This issue could be 
-   eliminate by merging files based on the time difference between sequential 
+   eliminated by merging files based on the time difference between sequential 
    images (reported in img_2_img_time_diff variable). This process would need 
-   to be repeated while there is atleast one element in the img_2_img_time_diff
-   variable that was less than a given time difference threshold (e.g., 1 hour). 
+   to be repeated while there is at least one element in the img_2_img_time_diff
+   variable that is less than a given time difference threshold (e.g., 1 hour). 
 2) Image mosaicing occurs before the Top-of-atmosphere coefficients are applied.
    As such the TOA-coefficients from the first image are applied to both
    mosaiced images. Although this may be an issue that could be mitigated by
@@ -171,16 +171,18 @@ landscape change across the scene and at what scale.
 3) All functions were designed to be generalizable. In this task, I
    was assigned to calculate the rate of change from vegetation to soil. Using
    the developed functions, the program can easily be modified to look at 
-   different types of changes (e.g., vegetation to soil). The function were also
+   different types of changes (e.g., vegetation to soil). The functions were also
    designed to handle multiple classes that can be differentiated by 
-   thresholding NDVI. 
+   thresholding NDVI. For instance, the program could be modified to identify
+   soil, sparse vegatation and dense vegation classes to understand how the
+   scene is change over the growing period. 
 4) The time series mask could be expanded to remove water from the scene using 
    spectral indices that exploit information in the blue end of the spectrum.
    In this analysis, NDVI<0 were unclassified. Given that water typically has a 
    negative NDVI (as water attenuates electromagnetic radiation strongly at 
    longer wavelengths), the unclassified class likely represented water. In the
    analyzed scene, there was only one easily visible water body. Given that
-   this body changed to soil throughout the time series, this cloud imply
+   this body changed to soil throughout the time series, this could imply
    that the body of water was shallow and dried up in the summer.
 5) The python script was developed and tested on a windows 10 machine. While
    testing the program in macOS, various bugs appeared. Although these bugs were
@@ -191,4 +193,11 @@ landscape change across the scene and at what scale.
    data folder otherwise the program will fail. This is due to how the program 
    parses the file names. This issue could be resolved by requiring users to
    manually input the name of the files to be analyzed instead of automatically
-   extracting them. 
+   extracting them.
+7) Although outside the scope of the project, the rate of change between all 
+   classes could be calculated to provide further insight to the scene. In this
+   assignemnt, we assessed the transition from vegetation to soil, which is
+   interesting as it idenified areas of potential forest loss. It would equally
+   be interesting to look at the rate of change from soil to vegeation as it 
+   would provide insight into how the vegeation expands and greens up in the 
+   summer season. 
