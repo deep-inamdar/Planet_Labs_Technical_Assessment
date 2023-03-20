@@ -11,7 +11,7 @@ image series.
 
 ## Download Repository to Local Folder
 1) Open the provided GitHub repository
-2) Click the green " <> code" button 
+2) Click the green "code" button 
 3) Download ZIP to desired location 
 4) Unzip folder to dersired location
 
@@ -31,7 +31,7 @@ image series.
 
 # Additional Details About Program
 
-## High-level flowchart
+## High-Level Flowchart
 1) Extract file names of images, UDM and xml files.
 2) Extract relevant meta data from xml files (including TOA-Coefficients)
 3) Import imagery and apply TOA-Coefficients
@@ -117,14 +117,14 @@ $$
 Class = Unclassified \quad if \quad NDVI < 0 
 $$
 
-In this analysis, various thresholds were tested(Threshold=0.1,0.2,0.3,0.4,0.5,
+In this analysis, various thresholds were tested (Threshold=0.1,0.2,0.3,0.4,0.5,
 0.6). The outputs from each of these tests can be seen in the following 
 directory: ".../Planet_Labs_Technical_Assessment-main/Threshold_Testing/".
 Specifically, each folder contained the output (console output+ classification
 and change detection maps) for each threshold (e.g., the data for threshold=0.1
 was stored in ".../Planet_Labs_Technical_Assessment-main/Threshold_Testing/Thresh_0_1).
 Selecting a threshold for NDVI is difficult without ground data for validation.
-The threshold was qualitatively selected based on how well the classification map
+A threshold of 0.4 was qualitatively selected based on how well the classification map
 corresponded to the real imagery. Although this threshold is not comprehensive,
 it is impossible to know with certainty what threshold best separates 
 vegetation and soil without ground validation. 
